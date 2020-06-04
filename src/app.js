@@ -2,18 +2,22 @@ const express = require('express');
 const path = require('path');
 const app = express();
 const port = 3000;
+const routes = require('./routes');
 
 app.set('view engine', 'pug');
-app.set('views', path.join(__dirname, 'templates'));
-app.use(express.static(path.join(__dirname, 'templates')));
+app.set('views', path.join(__dirname, 'pages'));
+app.use(express.static(path.join(__dirname, 'pages')));
 
-app.use('/static', express.static(__dirname + '/public'));
-
-const birds = require('./router/birds');
-app.use('/birds', birds);
+app.use(express.static(path.join(__dirname, 'images')));
+app.use(express.static(path.join(__dirname, 'styles')));
+app.use('/static', express.static(path.join(__dirname + '/../public')));
 
 app.get('/', function (req, res) {
-  res.render('index', { title: 'Hey', message: `a + b = ${parseInt(req.query.a) + parseInt(req.query.b)}` });
+  res.render('index');
+});
+
+Object.keys(routes).forEach((routeName) => {
+  app.use(`/${routeName}`, routes[routeName]);
 });
 
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
